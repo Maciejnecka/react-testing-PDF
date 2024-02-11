@@ -1,17 +1,20 @@
 import React from 'react';
+import CatchError from '../CatchError';
 
 function LocalDate({ date }) {
   return <time>{date.toLocaleString()}</time>;
 }
+
 function App() {
-  try {
-    return (
-      <div className="App">
-        <LocalDate />
-      </div>
-    );
-  } catch (err) {
-    return <h1>{err.message}</h1>;
-  }
+  return (
+    <CatchError message="outside">
+      <CatchError message="inside">
+        <div className="App">
+          <LocalDate />
+        </div>
+      </CatchError>
+    </CatchError>
+  );
 }
+
 export default App;
