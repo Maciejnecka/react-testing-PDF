@@ -1,8 +1,55 @@
 import { get } from './ipProvider';
 
+jest.mock('./ipProvider');
+
 describe('get()', () => {
   it('should fetch ip when send request', async () => {
+    get.mockResolvedValue({ ip: '100.100.100.100' });
+
     const data = await get();
-    expect(data.ip).toBe('77.114.58.236');
+    expect(data.ip).toBe('100.100.100.100');
+  });
+});
+
+describe('mock', () => {
+  it('jest.fn', () => {
+    const mockFn = jest.fn();
+    ['a', 'b', 'c'].forEach(mockFn);
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    // pierwszy parametr przy pierwszym wywołaniu
+    expect(mockFn.mock.calls[0][0]).toBe('a');
+    // drugi parametr przy pierwszym wywołaniu
+    expect(mockFn.mock.calls[0][1]).toBe(0);
+    // pierwsza zwrócona wartość
+    expect(mockFn.mock.results[0].value).toBe(undefined);
+  });
+
+  it('jest.fn(), return', () => {
+    const mockFn = jest.fn();
+    mockFn.mockReturnValue(false);
+    mockFn.mockReturnValueOnce(true);
+    mockFn.mockReturnValueOnce(true);
+
+    const newArr = ['a', 'b', 'c'].map(mockFn);
+    expect(mockFn).toHaveBeenCalledTimes(3);
+    expect(newArr).toEqual([true, true, false]);
+  });
+
+  it('jest.fn(), promise resolved', async () => {
+    const mockPromise = jest.fn();
+    mockPromise.mockResolvedValue(true);
+
+    const data = await mockPromise();
+    expect(data).toBe(true);
+  });
+
+  it('jest.fn(), promise rejected', () => {
+    const mockPromise = jest.fn();
+    mockPromise.mockRejectedValue(new Error('Err'));
+
+    expect.assertions(1);
+
+    // eslint-disable-next-line jest/no-conditional-expect
+    return mockPromise().catch((e) => expect(e.message).toBe('Err'));
   });
 });
