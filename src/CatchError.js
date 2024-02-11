@@ -1,3 +1,4 @@
+// ./src/CatchError.js
 import React from 'react';
 
 class CatchError extends React.Component {
@@ -11,6 +12,7 @@ class CatchError extends React.Component {
     if (this.state.hasError) {
       return <h1>{this.props.message}</h1>;
     }
+
     return this.props.children;
   }
 }

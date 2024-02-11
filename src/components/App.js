@@ -1,19 +1,18 @@
-import React from 'react';
-import CatchError from '../CatchError';
-
-function LocalDate({ date }) {
-  return <time>{date.toLocaleString()}</time>;
-}
+// ./src/App.js
+import { ErrorBoundary } from 'react-error-boundary';
+import Timer from '../Timer';
 
 function App() {
   return (
-    <CatchError message="outside">
-      <CatchError message="inside">
-        <div className="App">
-          <LocalDate />
-        </div>
-      </CatchError>
-    </CatchError>
+    <ErrorBoundary
+      fallbackRender={({ error }) => {
+        return <h1>{error.message}</h1>;
+      }}
+    >
+      <div className="App">
+        <Timer seconds="3" />
+      </div>
+    </ErrorBoundary>
   );
 }
 
