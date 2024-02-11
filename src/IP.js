@@ -1,17 +1,34 @@
 // ./src/IP.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { get } from './api/ipProvider';
+
 function IP() {
+  const isMounted = useRef(false);
   const [ip, setIp] = useState(null);
+
   useEffect(() => {
-    let isMounted = true;
+    isMounted.current = true;
     get().then((data) => {
-      if (isMounted) setIp(() => data.ip);
+      if (isMounted.current) setIp(() => data.ip);
     });
-    return () => (isMounted = false);
+    return () => (isMounted.current = false);
   }, []);
 
+  function handleClick() {
+    setIp(null);
+    get().then((data) => {
+      if (isMounted.current) setIp(() => data.ip);
+    });
+  }
+
   if (ip === null) return <p>Loading...</p>;
-  return <h1>{ip}</h1>;
+
+  return (
+    <section>
+      <h1>{ip}</h1>
+      <button onClick={handleClick}>refresh</button>
+    </section>
+  );
 }
+
 export default IP;

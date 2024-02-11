@@ -1,6 +1,7 @@
 // ./src/IP.test.js
-import { fireEvent, render, screen } from '@testing-library/react';
-import { ipProviderFetchResolvedOnce } from './testUtilis';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ipProviderFetchResolvedOnce } from './testUtils';
 import IP from './IP';
 
 jest.spyOn(window, 'fetch');
@@ -13,22 +14,23 @@ describe('<IP>', () => {
 
     const loader = screen.getByText(/Loading.../i);
     expect(loader).toBeInTheDocument();
+
     const reg = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/i;
     const ip = await screen.findByText(reg);
     expect(ip).toBeInTheDocument();
   });
 
-  test('refresh IP when button was clicked', async () => {
+  test('refresh IP when the button was clicked', async () => {
+    const newIP = '1.1.1.1';
     ipProviderFetchResolvedOnce(window.fetch);
-    ipProviderFetchResolvedOnce(window.fetch);
+    ipProviderFetchResolvedOnce(window.fetch, newIP);
+
     render(<IP />);
 
     const button = await screen.findByRole('button', { name: 'refresh' });
+    userEvent.click(button);
 
-    fireEvent.click(button);
-
-    const ip = await screen.findByText('100.100.100.100');
-
+    const ip = await screen.findByText(newIP);
     expect(ip).toBeInTheDocument();
   });
 });
