@@ -1,8 +1,29 @@
 import { get } from './ipProvider';
 
-jest.mock('./ipProvider');
+jest.spyOn(window, 'fetch');
 
 describe('get()', () => {
+  it('should fetch ip when send request', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => {
+        return { ip: '100.100.100.100' };
+      },
+    });
+
+    const data = await get();
+    expect(data.ip).toBe('100.100.100.100');
+    expect(window.fetch).toHaveBeenCalledTimes(1);
+    expect(window.fetch).toHaveBeenCalledWith(
+      'https://api.ipify.org?format=json',
+      null
+    );
+  });
+});
+
+jest.mock('./ipProvider');
+
+describe('get() mock', () => {
   it('should fetch ip when send request', async () => {
     get.mockResolvedValue({ ip: '100.100.100.100' });
 
