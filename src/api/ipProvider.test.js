@@ -1,15 +1,11 @@
 import { get } from './ipProvider';
+import { ipProviderFetchResolvedOnce } from '../testUtilis';
 
 jest.spyOn(window, 'fetch');
 
 describe('get()', () => {
   it('should fetch ip when send request', async () => {
-    window.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => {
-        return { ip: '100.100.100.100' };
-      },
-    });
+    ipProviderFetchResolvedOnce(window, fetch);
 
     const data = await get();
     expect(data.ip).toBe('100.100.100.100');
